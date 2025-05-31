@@ -9,7 +9,85 @@ const AdminUpload = () => {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [uploading, setUploading] = useState(false);
+import React, { useState, useEffect } from 'react';
+// ... existing imports ...
+
+const AdminUpload = () => {
+  // ... existing state declarations ...
+  const [pdfs, setPdfs] = useState([]);
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/admin/login');
+    } else {
+      // Load existing PDFs on page load
+      fetchPdfs();
+    }
+  }, [navigate]);
+
+  const fetchPdfs = async () => {
+    try {
+      const response = await pdfAPI.getAll();
+      setPdfs(response.data);
+    } catch (error) {
+      console.error('Error fetching PDFs:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await pdfAPI.delete(id);
+      // Refresh list after deletion
+      setPdfs(pdfs.filter(pdf => pdf.id !== id));
+    } catch (error) {
+      console.error('Error deleting PDF:', error);
+      setError('Failed to delete PDF. Please try again.');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Add New Story
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Upload a new story or document to your StoryTime library
+        </p>
+      </div>
+
+      {/* Recently Uploaded PDFs */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Manage PDFs</h2>
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+          {pdfs.map(pdf => (
+            <li key={pdf.id} className="py-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{pdf.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{pdf.description || 'No description'}</p>
+              </div>
+              <button
+                onClick={() => handleDelete(pdf.id)}
+                className="btn-danger"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Success Message */}
+      // ... existing Success Message ...
+
+      {/* Upload Form */}
+      // ... existing Upload Form ...
+    </div>
+  );
+};
+
+export default AdminUpload;
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
