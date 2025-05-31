@@ -63,6 +63,12 @@ check_dependencies() {
         print_warning "Nginx is not installed"
         echo "Install with: sudo apt update && sudo apt install nginx"
     fi
+
+    # Check lsof
+    if ! command -v lsof &> /dev/null; then
+        print_error "lsof is not installed. Please install it (e.g., sudo apt install lsof)"
+        exit 1
+    fi
     
     print_success "Dependencies check completed"
 }
@@ -105,13 +111,13 @@ cleanup_existing() {
     PORT_3000_PID=$(lsof -ti:3000 2>/dev/null || true)
     if [ ! -z "$PORT_3000_PID" ]; then
         print_warning "Port 3000 is in use, freeing it..."
-        kill -9 "$PORT_3000_PID" 2>/dev/null || true
+        sudo kill -9 "$PORT_3000_PID" 2>/dev/null || true
     fi
 
-    PORT_8081_PID=$(lsof -ti:8081 2>/dev/null || true)
-    if [ ! -z "$PORT_8081_PID" ]; then
-        print_warning "Port 8081 is in use, freeing it..."
-        kill -9 "$PORT_8081_PID" 2>/dev/null || true
+    PORT_8082_PID=$(lsof -ti:8082 2>/dev/null || true)
+    if [ ! -z "$PORT_8082_PID" ]; then
+        print_warning "Port 8082 is in use, freeing it..."
+        sudo kill -9 "$PORT_8082_PID" 2>/dev/null || true
     fi
 
     # Clean up docker networks
