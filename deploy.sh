@@ -89,6 +89,38 @@ setup_environment() {
     print_success "Environment setup completed"
 }
 
+# Cleanup existing containers and ports
+cleanup_existing() {
+    echo "🧹 Cleaning up existing containers and ports..."
+    
+    # Stop all containers with storytime in the name
+    docker stop $(docker ps -q --filter "name=storytime") 2>/dev/null || true
+    docker rm $(docker ps -aq --filter "name=storytime") 2>/dev/null || true
+    
+    # Stop containers using our specific names
+    docker stop pdf-viewer-backend pdf-viewer-frontend 2>/dev/null || true
+    docker rm pdf-viewer-backend pdf-viewer-frontend 2>/dev/null || true
+    
+    # Check and free ports
+    PORT_3000_PID=$(lsof -ti:3000 2>/dev/null || true)
+    if [ ! -z "$PORT_3000_PID" ]; then
+        print_warning "Port 3000 is in use, freeing it..."
+        kill -9 "$PORT_3000_PID" 2>/dev/null || trueueueue
+    fi
+    
+    PORT_8081_PID=$(lsof -ti:8081 2>/dev/null || true)
+    if [ ! -z "$PORT_8081_PID" ]; then
+        print_warning "Port 8081 is in use, freeing it..."
+        kill -9 "$PORT_8081_PID" 2>/dev/null || trueueueue
+    fi
+    
+    # Clean up docker networks
+    docker network rm storytime-network 2>/dev/null || true
+    docker network rm pdf-viewer-network 2>/dev/null || true
+    
+    print_success "Cleanup completed"
+}
+
 # Build and start application
 start_application() {
     echo "🏗️  Building and starting application..."
@@ -96,26 +128,29 @@ start_application() {
     cd $APP_DIR
     
     # Make scripts executable
-    chmod +x start.sh run-local.sh
+    chmod +x run-local.sh cleanup-ports.sh
+    
+    # Cleanup existing containers and ports
+    cleanup_existing
     
     # Stop any existing containers
-    docker-compose down 2>/dev/null || true
+    docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
     
-    # Build and start
-    docker-compose up -d --build
+    # Build and start with production compose file
+    docker-compose -f docker-compose.prod.yml up -d --build
     
     # Wait for services to start
     echo "⏳ Waiting for services to start..."
     sleep 15
     
     # Check if services are running
-    if docker-compose ps | grep -q "Up"; then
+    if docker-compose -f docker-compose.prod.yml ps | grep -q "Up"; then
         print_success "Application started successfully"
         echo "Frontend: http://localhost:3000"
-        echo "Backend: http://localhost:8080"
+        echo "Backend: http://localhost:8081"
     else
         print_error "Failed to start application"
-        echo "Check logs with: docker-compose logs"
+        echo "Check logs with: docker-compose -f docker-compose.prod.yml logs"
         exit 1
     fi
 }
@@ -166,7 +201,7 @@ server {
     
     # Backend API
     location /api/ {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8081;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -177,7 +212,7 @@ server {
     
     # Health check
     location /health {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8081;
         access_log off;
     }
 }

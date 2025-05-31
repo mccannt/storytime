@@ -10,7 +10,7 @@ services:
       - ./uploads:/app/uploads
       - ./backend/database:/app/database
     ports:
-      - "8080:8080"
+      - "8081:8080"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
