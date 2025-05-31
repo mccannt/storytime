@@ -44,7 +44,7 @@ PORT_3000_PID=$(lsof -ti:3000 2>/dev/null || true)
 if [ ! -z "$PORT_3000_PID" ]; then
     print_warning "Port 3000 is in use by process $PORT_3000_PID"
     echo "Killing process on port 3000..."
-    kill -9 "$PORT_3000_PID" 2>/dev/null || trueue
+    kill -9 "$PORT_3000_PID" 2>/dev/null || true
     print_success "Freed port 3000"
 fi
 
@@ -113,25 +113,25 @@ echo "Stopping PDF viewer containers..."
 docker stop pdf-viewer-backend pdf-viewer-frontend 2>/dev/null || true
 docker rm pdf-viewer-backend pdf-viewer-frontend 2>/dev/null || true
 
-# Stop any containers using ports 3000 and 8080
-echo "Checking for processes using ports 3000 and 8080..."
+# Stop any containers using ports 3000 and 8081
+echo "Checking for processes using ports 3000 and 8081..."
 
 # Check port 3000
 PORT_3000_PID=$(lsof -ti:3000 2>/dev/null || true)
 if [ ! -z "$PORT_3000_PID" ]; then
     print_warning "Port 3000 is in use by process $PORT_3000_PID"
     echo "Killing process on port 3000..."
-    kill -9 $PORT_3000_PID 2>/dev/null || true
+    kill -9 "$PORT_3000_PID" 2>/dev/null || true
     print_success "Freed port 3000"
 fi
 
-# Check port 8080
-PORT_8080_PID=$(lsof -ti:8080 2>/dev/null || true)
-if [ ! -z "$PORT_8080_PID" ]; then
-    print_warning "Port 8080 is in use by process $PORT_8080_PID"
-    echo "Killing process on port 8080..."
-    kill -9 $PORT_8080_PID 2>/dev/null || true
-    print_success "Freed port 8080"
+# Check port 8081
+PORT_8081_PID=$(lsof -ti:8081 2>/dev/null || true)
+if [ ! -z "$PORT_8081_PID" ]; then
+    print_warning "Port 8081 is in use by process $PORT_8081_PID"
+    echo "Killing process on port 8081..."
+    kill -9 "$PORT_8081_PID" 2>/dev/null || true
+    print_success "Freed port 8081"
 fi
 
 # Clean up docker networks
@@ -147,7 +147,7 @@ docker container prune -f 2>/dev/null || true
 echo ""
 echo "Current port usage:"
 echo "Port 3000: $(lsof -ti:3000 2>/dev/null || echo 'Free')"
-echo "Port 8080: $(lsof -ti:8080 2>/dev/null || echo 'Free')"
+echo "Port 8081: $(lsof -ti:8081 2>/dev/null || echo 'Free')"
 
 print_success "Cleanup completed!"
 echo ""

@@ -105,15 +105,15 @@ cleanup_existing() {
     PORT_3000_PID=$(lsof -ti:3000 2>/dev/null || true)
     if [ ! -z "$PORT_3000_PID" ]; then
         print_warning "Port 3000 is in use, freeing it..."
-        kill -9 "$PORT_3000_PID" 2>/dev/null || trueueueue
+        kill -9 "$PORT_3000_PID" 2>/dev/null || true
     fi
-    
+
     PORT_8081_PID=$(lsof -ti:8081 2>/dev/null || true)
     if [ ! -z "$PORT_8081_PID" ]; then
         print_warning "Port 8081 is in use, freeing it..."
-        kill -9 "$PORT_8081_PID" 2>/dev/null || trueueueue
+        kill -9 "$PORT_8081_PID" 2>/dev/null || true
     fi
-    
+
     # Clean up docker networks
     docker network rm storytime-network 2>/dev/null || true
     docker network rm pdf-viewer-network 2>/dev/null || true
