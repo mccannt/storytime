@@ -176,72 +176,105 @@ const AdminUpload = () => {
       )}
 
       <div className="card p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              PDF File *
-            </label>
+  <form onSubmit={handleSubmit} className="space-y-6">
+    <div>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        PDF File *
+      </label>
 
-            {!file ? (
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-              >
-                {/* ... upload instructions */}
-              </div>
-            ) : (
+      {!file ? (
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
+        >
+          {/* Hidden file input for selecting PDF */}
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileInputChange}
+            className="hidden"
+            id="file-upload"
+          />
+          <label
+            htmlFor="file-upload"
+            className="btn-primary cursor-pointer inline-block"
+          >
+            Choose File
+          </label>
+        </div>
+      ) : (
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <FileText className="h-8 w-8 text-red-500" />
               <div>
-                {/* ... file display info */}
-              </div>
-            )}
-          </div>
-
-          {/* More form fields for title, description, etc. */}
-
-          {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-              <div className="flex items-center">
-                <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 mr-2" />
-                <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {file.name}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {formatFileSize(file.size)}
+                </p>
               </div>
             </div>
-          )}
-
-          <div className="flex justify-end space-x-3">
             <button
               type="button"
-              onClick={() => {
-                setFile(null);
-                setTitle('');
-                setDescription('');
-                setError('');
-              }}
-              className="btn-secondary"
-              disabled={uploading}
+              onClick={removeFile}
+              className="p-1 text-gray-400 hover:text-red-500"
             >
-              Clear
-            </button>
-            <button
-              type="submit"
-              disabled={uploading || !file || !title.trim()}
-              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {uploading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="loading-spinner h-4 w-4"></div>
-                  <span>Uploading...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Upload className="h-4 w-4" />
-                  <span>Upload PDF</span>
-                </div>
-              )}
+              <X className="h-5 w-5" />
             </button>
           </div>
-        </form>
+        </div>
+      )}
+    </div>
+
+    {/* More form fields for title, description, etc. */}
+
+    {error && (
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+        <div className="flex items-center">
+          <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 mr-2" />
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        </div>
       </div>
+    )}
+
+    <div className="flex justify-end space-x-3">
+      <button
+        type="button"
+        onClick={() => {
+          setFile(null);
+          setTitle('');
+          setDescription('');
+          setError('');
+        }}
+        className="btn-secondary"
+        disabled={uploading}
+      >
+        Clear
+      </button>
+      <button
+        type="submit"
+        disabled={uploading || !file || !title.trim()}
+        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {uploading ? (
+          <div className="flex items-center space-x-2">
+            <div className="loading-spinner h-4 w-4"></div>
+            <span>Uploading...</span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Upload className="h-4 w-4" />
+            <span>Upload PDF</span>
+          </div>
+        )}
+      </button>
+    </div>
+  </form>
+</div>
     </div>
   );
 };
