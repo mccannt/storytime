@@ -33,12 +33,12 @@ print_error() {
 }
 
 # Check if running as root
-check_root() {
-    if [[ $EUID -eq 0 ]]; then
-        print_error "This script should not be run as root"
-        exit 1
-    fi
-}
+# check_root() {
+#     if [[ $EUID -eq 0 ]]; then
+#         print_error "This script should not be run as root"
+#         exit 1
+#     fi
+# }
 
 # Check dependencies
 check_dependencies() {
