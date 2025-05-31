@@ -1,3 +1,4 @@
+cat Dockerfile.frontend
 # Frontend Dockerfile
 FROM node:18-alpine as build
 
@@ -12,6 +13,9 @@ RUN npm install
 
 # Copy source code
 COPY frontend/ .
+
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Build the application
 RUN npm run build

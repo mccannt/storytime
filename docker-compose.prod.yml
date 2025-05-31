@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile.backend
     container_name: storytime-backend
     environment:
+      - FRONTEND_URL=http://srv814060.hstgr.cloud:3001
+      - ADMIN_PASSWORD=change_this_secure_password_123
       - NODE_ENV=production
     volumes:
       - ./uploads:/app/uploads
@@ -25,9 +27,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        - REACT_APP_API_URL=http://srv814060.hstgr.cloud:8081/api
     container_name: storytime-frontend
+    environment:
+      - FRONTEND_URL=http://srv814060.hstgr.cloud:3001
+      - ADMIN_PASSWORD=change_this_secure_password_123
+      - REACT_APP_API_URL=http://srv814060.hstgr.cloud:8081/api
     ports:
-      - "3000:80"
+      - "3001:80"
     depends_on:
       backend:
         condition: service_healthy
