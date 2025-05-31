@@ -18,7 +18,7 @@ fi
 
 # Setup backend
 echo "🔧 Setting up backend..."
-cd backend
+cd backend || exit 1
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing backend dependencies..."
     npm install
@@ -35,7 +35,7 @@ cd ..
 
 # Setup frontend
 echo "🎨 Setting up frontend..."
-cd frontend
+cd ../frontend || exit 1
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing frontend dependencies..."
     npm install
@@ -60,7 +60,7 @@ echo ""
 echo "Press Ctrl+C to stop both servers"
 
 # Wait for interrupt
-trap "echo '🛑 Stopping servers...'; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit" INT
+trap 'echo "🛑 Stopping servers..."; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit' INT
 
 # Keep script running
 wait
