@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, FileText, X, Check, AlertCircle } from 'lucide-react';
-import { pdfAPI } from '../utils/api';
+import { pdfAPI } from '../utils/api'; // Assuming pdfAPI is correctly imported
 import { isAuthenticated } from '../utils/auth';
 import { formatFileSize } from '../utils/formatters';
 
 const AdminUpload = () => {
-  const [file, setFile] = useState(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-import React, { useState, useEffect } from 'react';
-// ... existing imports ...
-
-const AdminUpload = () => {
-  // ... existing state declarations ...
   const [pdfs, setPdfs] = useState([]);
 
   useEffect(() => {
@@ -24,6 +16,11 @@ const AdminUpload = () => {
       fetchPdfs();
     }
   }, [navigate]);
+
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [uploading, setUploading] = useState(false); // Added uploading state
 
   const fetchPdfs = async () => {
     try {
@@ -45,49 +42,6 @@ const AdminUpload = () => {
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Add New Story
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Upload a new story or document to your StoryTime library
-        </p>
-      </div>
-
-      {/* Recently Uploaded PDFs */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Manage PDFs</h2>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {pdfs.map(pdf => (
-            <li key={pdf.id} className="py-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{pdf.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{pdf.description || 'No description'}</p>
-              </div>
-              <button
-                onClick={() => handleDelete(pdf.id)}
-                className="btn-danger"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Success Message */}
-      // ... existing Success Message ...
-
-      {/* Upload Form */}
-      // ... existing Upload Form ...
-    </div>
-  );
-};
-
-export default AdminUpload;
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
@@ -196,6 +150,26 @@ export default AdminUpload;
         <p className="text-gray-600 dark:text-gray-400">
           Upload a new story or document to your StoryTime library
         </p>
+      </div>
+
+      {/* Manage PDFs Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Manage PDFs</h2>
+        {pdfs.length === 0 ? (
+          <p className="text-gray-600 dark:text-gray-400">No PDFs uploaded yet.</p>
+        ) : (
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+            {pdfs.map(pdf => (
+              <li key={pdf.id} className="py-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">{pdf.title}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{pdf.description || 'No description'}</p>
+                </div>
+                <button onClick={() => handleDelete(pdf.id)} className="btn-danger">Delete</button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Success Message */}
